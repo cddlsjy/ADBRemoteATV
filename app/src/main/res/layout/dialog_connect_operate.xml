@@ -47,18 +47,37 @@
         app:errorTextAppearance="@style/errorTextAppearance"
         app:hintTextAppearance="@style/hintAppearance">
 
-        <EditText
-            android:id="@+id/text_ip"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:background="@drawable/background_input"
-            android:ems="10"
-            android:hint="@string/text_ip"
-            android:inputType="text"
-            android:textColor="@color/text_color"
-            android:textColorHint="@color/line_color"
-            android:textSize="14sp" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/text_ip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:background="@drawable/background_input"
+                android:ems="10"
+                android:hint="@string/text_ip"
+                android:inputType="text"
+                android:textColor="@color/text_color"
+                android:textColorHint="@color/line_color"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/btn_scan_ip"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/background_input"
+                android:src="@drawable/ic_scan"
+                android:contentDescription="@string/text_scan_ip"
+                android:padding="8dp"
+                android:scaleType="centerInside"/>
+        </LinearLayout>
     </com.swx.adbremote.components.NewTextInputLayout>
 
     <com.swx.adbremote.components.NewTextInputLayout

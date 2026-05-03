@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.textfield.TextInputLayout;
 import com.swx.adbremote.R;
 import com.swx.adbremote.entity.ConnectInstance;
+import com.swx.adbremote.entity.DeviceInfo;
 import com.swx.adbremote.utils.ValidationUtil;
 
 public class ConnectOperateDialog extends Dialog {
@@ -28,6 +30,7 @@ public class ConnectOperateDialog extends Dialog {
     private EditText textPort;
     private Button positiveBtn;
     private Button negativeBtn;
+    private ImageButton btnScanIp;
     private TextInputLayout ipInputLayout;
     private TextInputLayout portInputLayout;
     private Integer id;
@@ -76,6 +79,7 @@ public class ConnectOperateDialog extends Dialog {
         textIp = findViewById(R.id.text_ip);
         textAlias = findViewById(R.id.text_alias);
         textPort = findViewById(R.id.text_port);
+        btnScanIp = findViewById(R.id.btn_scan_ip);
         ipInputLayout = findViewById(R.id.input_layout_text_ip);
         portInputLayout = findViewById(R.id.input_layout_text_port);
     }
@@ -95,6 +99,17 @@ public class ConnectOperateDialog extends Dialog {
         });
         negativeBtn.setOnClickListener(view -> {
             listener.onNegativeClick(view);
+        });
+        btnScanIp.setOnClickListener(v -> {
+            DeviceScanDialog scanDialog = new DeviceScanDialog(getContext());
+            scanDialog.setOnDeviceSelectedListener(device -> {
+                textIp.setText(device.getIpAddress());
+                textPort.setText(String.valueOf(device.getPort()));
+                if (TextUtils.isEmpty(textAlias.getText())) {
+                    textAlias.setText(device.getIpAddress());
+                }
+            });
+            scanDialog.show();
         });
     }
 
