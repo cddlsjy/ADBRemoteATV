@@ -23,6 +23,11 @@ public class ConnectManager {
         return ConnectContact.isExist(dbHelper, ip, port);
     }
 
+    public ConnectInstance getByIpAndPort(String ip, Integer port) {
+        if (TextUtils.isEmpty(ip) || port == null) return null;
+        return ConnectContact.queryByIpAndPort(dbHelper, ip, port);
+    }
+
     public List<ConnectInstance> list() {
         return ConnectContact.query(dbHelper);
     }

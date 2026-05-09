@@ -57,6 +57,19 @@ public class ConnectContact {
         }
     }
 
+    public static ConnectInstance queryByIpAndPort(SQLiteOpenHelper helper, String ip, Integer port) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        String selection = String.format("%s =? AND %s =? ", ConnectColumns.IP, ConnectColumns.PORT);
+        String[] selectionArgs = {ip, String.valueOf(port)};
+        Cursor cursor = db.query(TABLE_NAME, AVAILABLE_PROJECTION, selection, selectionArgs, null, null, null);
+        ConnectInstance connect = null;
+        if (cursor.moveToFirst()) {
+            connect = getConnectFromCursor(cursor);
+        }
+        cursor.close();
+        return connect;
+    }
+
     public static List<ConnectInstance> query(SQLiteOpenHelper helper) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME, AVAILABLE_PROJECTION, null, null, null, null, null, null);

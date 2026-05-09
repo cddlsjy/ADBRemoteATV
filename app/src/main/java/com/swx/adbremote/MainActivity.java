@@ -30,12 +30,15 @@ import com.swx.adbremote.activity.ConnectInstanceActivity;
 import com.swx.adbremote.activity.SettingActivity;
 import com.swx.adbremote.adapter.QuickAccessAppsAdapter;
 import com.swx.adbremote.adapter.ViewPager2Adapter;
+import com.swx.adbremote.components.DeviceScanDialog;
 import com.swx.adbremote.components.InputKeyboardDialog;
 import com.swx.adbremote.components.IndicatorView;
 import com.swx.adbremote.components.QuestionDialog;
 import com.swx.adbremote.database.DBManager;
+import com.swx.adbremote.database.connect.ConnectManager;
 import com.swx.adbremote.entity.AppItem;
 import com.swx.adbremote.entity.ConnectInstance;
+import com.swx.adbremote.entity.DeviceInfo;
 import com.swx.adbremote.enums.InputLanguageEnums;
 import com.swx.adbremote.enums.SettingLayoutEnums;
 import com.swx.adbremote.fragment.NumKeyboardFragment;
@@ -174,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_text_input).setOnClickListener(this);
         findViewById(R.id.btn_mute).setOnClickListener(this);
         findViewById(R.id.btn_setting).setOnClickListener(this);
+        findViewById(R.id.btn_scan_ip).setOnClickListener(this);
         findViewById(R.id.btn_switch_panel).setOnClickListener(this);
         findViewById(R.id.btn_tv_home).setOnClickListener(this);
         findViewById(R.id.btn_tv_back).setOnClickListener(this);
@@ -235,6 +239,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.btn_setting) {
             Intent intent = new Intent(this, SettingActivity.class);
             startActivity(intent);
+        } else if (id == R.id.btn_scan_ip) {
+            ConnectInstance connectedBean = ADBConnectUtil.getConnectedBean();
+            if (connectedBean != null) {
+                ADBConnectUtil.disconnect();
+            }
+            DeviceScanDialog scanDialog = new DeviceScanDialog(this);
+            scanDialog.setOnDeviceSelectedListener(device -> {
+                String ip = device.getIpAddress();
+                int port = device.getPort();
+                ThreadPoolService.newTask(() -> {
+                    ConnectManager connectManager = DBManager.getInstance().getConnectManager();
+                    boolean exist = connectManager.isExist(ip, port);
+                    ConnectInstance bean;
+                    if (!exist) {
+                        bean = connectManager.insert(new ConnectInstance(ip, ip, port));
+                    } else {
+                        bean = connectManager.getByIpAndPort(ip, port);
+                    }
+                    if (bean == null) return;
+                    ADBConnectUtil.bean = bean;
+                    ADBConnectUtil.connection(res -> {
+                        if (res) {
+                            tvChooseTvConnect.setText(bean.getAlias());
+                            ToastUtil.showToastThread(MainActivity.this.getString(R.string.text_connection_successful));
+                        } else {
+                            ToastUtil.showToastThread(MainActivity.this.getString(R.string.text_connection_failed));
+                        }
+                    });
+                });
+            });
+            scanDialog.show();
         } else if (id == R.id.btn_switch_panel) {
             int currentItem = viewPagerPanel.getCurrentItem();
             currentItem = currentItem == 0 ? 1 : 0;
