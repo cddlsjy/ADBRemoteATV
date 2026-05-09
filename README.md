@@ -1,7 +1,7 @@
 ﻿[English](README_en.md) / [中文](README.md)
 
 # ADB Remote ATV
-计划增加IP扫描功能
+成功增加IP扫描功能
 
 Android TV 的遥控器，基于 ADB Shell 命令
 
