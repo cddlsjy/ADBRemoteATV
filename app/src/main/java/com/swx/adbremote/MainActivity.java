@@ -30,6 +30,7 @@ import com.swx.adbremote.activity.ConnectInstanceActivity;
 import com.swx.adbremote.activity.SettingActivity;
 import com.swx.adbremote.adapter.QuickAccessAppsAdapter;
 import com.swx.adbremote.adapter.ViewPager2Adapter;
+import com.swx.adbremote.components.DeviceScanDialog;
 import com.swx.adbremote.components.InputKeyboardDialog;
 import com.swx.adbremote.components.IndicatorView;
 import com.swx.adbremote.components.QuestionDialog;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String originKeyboard;
 
     private ADBConnectUtil.ShellExecCallable switchKeyboardCallback;
+    private DeviceScanDialog currentScanDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_tv_media_fast_forward).setOnClickListener(this);
         findViewById(R.id.btn_tv_media_rewind).setOnClickListener(this);
         findViewById(R.id.btn_tv_menu).setOnClickListener(this);
+        findViewById(R.id.btn_scan_ip).setOnClickListener(this);
 
         ImageView btnTurnUpVolume = findViewById(R.id.btn_turn_up_volume);
         ImageView btnTurnDownVolume = findViewById(R.id.btn_turn_down_volume);
@@ -241,9 +244,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             viewPagerPanel.setCurrentItem(currentItem);
         } else if (id == R.id.btn_text_input) {
             showBottomSheetDialog();
+        } else if (id == R.id.btn_scan_ip) {
+            showDeviceScanDialog();
         } else {
             handleTvKeyEvent(id, view);
         }
+    }
+
+    private void showDeviceScanDialog() {
+        DeviceScanDialog scanDialog = new DeviceScanDialog(this);
+        currentScanDialog = scanDialog;
+        scanDialog.setOnDeviceSelectedListener(device -> {
+            // 跳转到连接实例页面并传递设备信息
+            Intent intent = new Intent(this, ConnectInstanceActivity.class);
+            intent.putExtra("device_ip", device.getIpAddress());
+            intent.putExtra("device_port", device.getPort());
+            startActivity(intent);
+        });
+        scanDialog.show();
     }
 
     public void handleQuickAccessRvItemClick(int position, AppItem app) {

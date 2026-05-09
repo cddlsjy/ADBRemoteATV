@@ -141,6 +141,38 @@ public class ConnectInstanceActivity extends AppCompatActivity implements View.O
         selectTools = findViewById(R.id.layout_bottom_tools);
         // 获取列表数据
         ThreadPoolService.newTask(this::initDataList);
+        // 检查是否有从扫描页面传递过来的设备信息
+        handleIntentData();
+    }
+
+    private void handleIntentData() {
+        Intent intent = getIntent();
+        String deviceIp = intent.getStringExtra("device_ip");
+        int devicePort = intent.getIntExtra("device_port", 5555);
+        if (deviceIp != null) {
+            // 显示连接对话框并填充设备信息
+            showDialogWithData(deviceIp, devicePort);
+        }
+    }
+
+    private void showDialogWithData(String ip, int port) {
+        if (dialog == null) {
+            dialog = new ConnectOperateDialog(this);
+            dialog.setOnButtonClickListener(new ConnectOperateDialog.OnButtonClickListener() {
+                @Override
+                public void onPositiveClick(Integer id, String alias, String ip, Integer port) {
+                    handleConnectOperateDialogConfirm(id, alias, ip, port);
+                }
+
+                @Override
+                public void onNegativeClick(View view) {
+                    dialog.hide();
+                }
+            });
+        }
+        ConnectInstance instance = new ConnectInstance(null, ip, ip, port);
+        dialog.setData(instance);
+        dialog.show();
     }
 
     /**
