@@ -30,6 +30,7 @@ import com.swx.adbremote.activity.ConnectInstanceActivity;
 import com.swx.adbremote.activity.SettingActivity;
 import com.swx.adbremote.adapter.QuickAccessAppsAdapter;
 import com.swx.adbremote.adapter.ViewPager2Adapter;
+import com.swx.adbremote.components.DeviceScanDialog;
 import com.swx.adbremote.components.InputKeyboardDialog;
 import com.swx.adbremote.components.IndicatorView;
 import com.swx.adbremote.components.QuestionDialog;
@@ -185,6 +186,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_tv_media_rewind).setOnClickListener(this);
         findViewById(R.id.btn_tv_menu).setOnClickListener(this);
 
+        ImageButton btnDiscover = findViewById(R.id.btn_discover);
+        btnDiscover.setOnClickListener(this);
+
         ImageView btnTurnUpVolume = findViewById(R.id.btn_turn_up_volume);
         ImageView btnTurnDownVolume = findViewById(R.id.btn_turn_down_volume);
         btnTurnUpVolume.setOnLongClickListener(this::handleLongClick);
@@ -241,6 +245,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             viewPagerPanel.setCurrentItem(currentItem);
         } else if (id == R.id.btn_text_input) {
             showBottomSheetDialog();
+        } else if (id == R.id.btn_discover) {
+            DeviceScanDialog scanDialog = new DeviceScanDialog(this);
+            scanDialog.show();
         } else {
             handleTvKeyEvent(id, view);
         }
